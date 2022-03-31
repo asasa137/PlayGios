@@ -96,7 +96,7 @@ end
 
 function pgrankingupdate()
     # matches.csv update and retrieval
-    matches = matchesupdate(; savedir = savedir)
+    matches = matchesupdate()
     matches = matches[matches.tourney_date .>= Atp.atprankingstart, :]
     # pgranking retrieval
     fpth = "$savedir/pgranking.csv"
@@ -151,6 +151,9 @@ end
 
 function pgstatscompute()
     pgranking = pgrankingget()
+    if isempty(pgranking)
+        pgranking = pgrankingupdate()
+    end
     pgranking.dateout = [pgranking.date[2:end]; today()]
     gd = groupby(pgranking, :pgname)
     pgstats = DataFrame(pgname = [], npg = [], dateinfirst = [],
